@@ -1,16 +1,22 @@
 # Firebase SDK Bundle
 
-A Symfony Bundle for the [Firebase PHP SDK](https://github.com/kreait/firebase-php).
+A Symfony Bundle for the [Firebase PHP SDK](https://github.com/beste/firebase-php).
 
 [![Current version](https://img.shields.io/packagist/v/kreait/firebase-bundle.svg?logo=composer)](https://packagist.org/packages/kreait/firebase-bundle)
 [![Monthly Downloads](https://img.shields.io/packagist/dm/kreait/firebase-bundle.svg)](https://packagist.org/packages/kreait/firebase-bundle/stats)
 [![Total Downloads](https://img.shields.io/packagist/dt/kreait/firebase-bundle.svg)](https://packagist.org/packages/kreait/firebase-bundle/stats)
-[![Tests](https://github.com/kreait/firebase-bundle/actions/workflows/tests.yml/badge.svg)](https://github.com/kreait/firebase-bundle/actions/workflows/tests.yml)
+[![Tests](https://github.com/beste/firebase-bundle/actions/workflows/tests.yml/badge.svg)](https://github.com/beste/firebase-bundle/actions/workflows/tests.yml)
 [![Sponsor](https://img.shields.io/static/v1?logo=GitHub&label=Sponsor&message=%E2%9D%A4&color=ff69b4)](https://github.com/sponsors/jeromegamez)
 
 > [!IMPORTANT]
-> **Support the project:** If it saves you or your team time, please consider
+> **Support the project:** This library is downloaded 1M+ times monthly and powers thousands of applications.
+> If it saves you or your team time, please consider
 > [sponsoring its development](https://github.com/sponsors/jeromegamez).
+
+> [!NOTE]
+> The project moved from the `kreait` to the `beste` GitHub Organization in January 2026.
+> The namespace remains `Kreait\Firebase\Symfony\Bundle` and the package name remains `kreait/firebase-bundle`.
+> Please update your remote URL if you have forked or cloned the repository.
 
 - [Overview](#overview)
 - [Installation](#installation)

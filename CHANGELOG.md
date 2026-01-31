@@ -5,42 +5,42 @@
 ## [5.7.0]
 
 * Added support for PHP 8.5 and Symfony 8
-  ([#74](https://github.com/kreait/firebase-bundle/pull/74))
+  ([#74](https://github.com/beste/firebase-bundle/pull/74))
 
 ## [5.6.0]
 
 * Make services lazy to instantiate them only when they are actually used
-  ([#66](https://github.com/kreait/firebase-bundle/pull/66))
+  ([#66](https://github.com/beste/firebase-bundle/pull/66))
 
 ## [5.5.0] - 2024-10-16
 
 * Added support for PHP 8.4
-  ([#64](https://github.com/kreait/firebase-bundle/pull/64))
+  ([#64](https://github.com/beste/firebase-bundle/pull/64))
 
 ## [5.4.0] - 2024-07-08
 
 * Added the ability to override the project id 
-  ([#63](https://github.com/kreait/firebase-bundle/pull/63))
+  ([#63](https://github.com/beste/firebase-bundle/pull/63))
 
 ## [5.3.0] - 2024-05-28
 
 * Added Support for overriding the `ProjectFactory`
-  ([#60](https://github.com/kreait/firebase-bundle/pull/60))
+  ([#60](https://github.com/beste/firebase-bundle/pull/60))
 
 ## [5.2.0] - 2023-11-30
 
 * Added Support for AppCheck
-  ([#54](https://github.com/kreait/firebase-bundle/pull/53))
+  ([#54](https://github.com/beste/firebase-bundle/pull/53))
 
 ## [5.1.1] - 2023-11-30
 
 * Actually support Symfony 7
-  ([#53](https://github.com/kreait/firebase-bundle/pull/53)) 
+  ([#53](https://github.com/beste/firebase-bundle/pull/53)) 
 
 ## [5.1.0] - 2023-11-30
 
 * Added support for PHP 8.3 and Symfony 7
-  ([#52](https://github.com/kreait/firebase-bundle/pull/52))
+  ([#52](https://github.com/beste/firebase-bundle/pull/52))
 
 ## [5.0.0] - 2023-01-13
 
@@ -52,7 +52,7 @@
 ### Added
 
 * Extra aliases have been added to make it easier to work with multiple projects.
-  ([#41](https://github.com/kreait/firebase-bundle/pull/41))
+  ([#41](https://github.com/beste/firebase-bundle/pull/41))
 
 ## [4.0.0] - 2022-01-09
 
@@ -94,7 +94,7 @@ This is a release with breaking changes. Please review the following changes and
 ## [2.4.0] - 2021-04-14
 ### Added
 * Added configuration option `tenant_id` to make a project tenant aware.
-  ([#31](https://github.com/kreait/firebase-bundle/pull/31))
+  ([#31](https://github.com/beste/firebase-bundle/pull/31))
 
 ### Changed
 * The bundle now requires at least version 5.17.1 of the Firebase PHP SDK
@@ -127,21 +127,21 @@ This is a release with breaking changes. Please review the following changes and
 * Removed Support for `kreait/firebase-php:<5.0`
 * Removed project aliases
 
-[Unreleased]: https://github.com/kreait/firebase-bundle/compare/5.4.0...HEAD
-[5.4.0]: https://github.com/kreait/firebase-bundle/compare/5.3.0...5.4.0
-[5.3.0]: https://github.com/kreait/firebase-bundle/compare/5.2.0...5.3.0
-[5.2.0]: https://github.com/kreait/firebase-bundle/compare/5.1.1...5.2.0
-[5.1.1]: https://github.com/kreait/firebase-bundle/compare/5.1.0...5.1.1
-[5.1.0]: https://github.com/kreait/firebase-bundle/compare/5.0.0...5.1.0
-[5.0.0]: https://github.com/kreait/firebase-bundle/compare/4.1.0...5.0.0
-[4.1.0]: https://github.com/kreait/firebase-bundle/compare/4.0.0...4.1.0
-[4.0.0]: https://github.com/kreait/firebase-bundle/compare/3.1.0...4.0.0
-[3.1.0]: https://github.com/kreait/firebase-bundle/compare/3.0.0...3.1.0
-[3.0.0]: https://github.com/kreait/firebase-bundle/compare/2.6.0...3.0.0
-[2.6.0]: https://github.com/kreait/firebase-bundle/compare/2.5.0...2.6.0
-[2.5.0]: https://github.com/kreait/firebase-bundle/compare/2.4.0...2.5.0
-[2.4.0]: https://github.com/kreait/firebase-bundle/compare/2.3.0...2.4.0
-[2.3.0]: https://github.com/kreait/firebase-bundle/compare/2.2.0...2.3.0
-[2.2.0]: https://github.com/kreait/firebase-bundle/compare/2.1.0...2.2.0
-[2.1.0]: https://github.com/kreait/firebase-bundle/compare/2.0.0...2.1.0
-[2.0.0]: https://github.com/kreait/firebase-bundle/releases/tag/2.0.0
+[Unreleased]: https://github.com/beste/firebase-bundle/compare/5.4.0...HEAD
+[5.4.0]: https://github.com/beste/firebase-bundle/compare/5.3.0...5.4.0
+[5.3.0]: https://github.com/beste/firebase-bundle/compare/5.2.0...5.3.0
+[5.2.0]: https://github.com/beste/firebase-bundle/compare/5.1.1...5.2.0
+[5.1.1]: https://github.com/beste/firebase-bundle/compare/5.1.0...5.1.1
+[5.1.0]: https://github.com/beste/firebase-bundle/compare/5.0.0...5.1.0
+[5.0.0]: https://github.com/beste/firebase-bundle/compare/4.1.0...5.0.0
+[4.1.0]: https://github.com/beste/firebase-bundle/compare/4.0.0...4.1.0
+[4.0.0]: https://github.com/beste/firebase-bundle/compare/3.1.0...4.0.0
+[3.1.0]: https://github.com/beste/firebase-bundle/compare/3.0.0...3.1.0
+[3.0.0]: https://github.com/beste/firebase-bundle/compare/2.6.0...3.0.0
+[2.6.0]: https://github.com/beste/firebase-bundle/compare/2.5.0...2.6.0
+[2.5.0]: https://github.com/beste/firebase-bundle/compare/2.4.0...2.5.0
+[2.4.0]: https://github.com/beste/firebase-bundle/compare/2.3.0...2.4.0
+[2.3.0]: https://github.com/beste/firebase-bundle/compare/2.2.0...2.3.0
+[2.2.0]: https://github.com/beste/firebase-bundle/compare/2.1.0...2.2.0
+[2.1.0]: https://github.com/beste/firebase-bundle/compare/2.0.0...2.1.0
+[2.0.0]: https://github.com/beste/firebase-bundle/releases/tag/2.0.0
