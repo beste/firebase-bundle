@@ -7,6 +7,7 @@ namespace Kreait\Firebase\Symfony\Bundle\Tests\DependencyInjection;
 use Kreait\Firebase;
 use Kreait\Firebase\Http\HttpClientOptions;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\FirebaseExtension;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionException;
@@ -66,6 +67,7 @@ final class FirebaseExtensionTest extends TestCase
         $this->assertInstanceOf(Firebase\Contract\AppCheck::class, $container->get(Firebase\Contract\AppCheck::class.' $fooAppCheck'));
     }
 
+    #[DoesNotPerformAssertions]
     public function test_a_verifier_cache_can_be_used(): void
     {
         $cacheServiceId = 'cache.app.simple.mock';
@@ -78,13 +80,13 @@ final class FirebaseExtensionTest extends TestCase
                 ],
             ],
         ]);
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+        $cache = $this->createStub(CacheItemPoolInterface::class);
         $container->set($cacheServiceId, $cache);
 
         $container->get(Firebase\Contract\Auth::class);
-        $this->addToAssertionCount(1);
     }
 
+    #[DoesNotPerformAssertions]
     public function test_an_auth_token_cache_can_be_used(): void
     {
         $cacheServiceId = 'cache.app.simple.mock';
@@ -97,13 +99,13 @@ final class FirebaseExtensionTest extends TestCase
                 ],
             ],
         ]);
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+        $cache = $this->createStub(CacheItemPoolInterface::class);
         $container->set($cacheServiceId, $cache);
 
         $container->get(Firebase\Contract\Auth::class);
-        $this->addToAssertionCount(1);
     }
 
+    #[DoesNotPerformAssertions]
     public function test_http_client_options_can_be_used(): void
     {
         $httpClientOptionsServiceId = 'firebase.http_client_options';
@@ -119,7 +121,6 @@ final class FirebaseExtensionTest extends TestCase
         $container->set($httpClientOptionsServiceId, HttpClientOptions::default()->withTimeout(10.0));
 
         $container->get(Firebase\Contract\Auth::class);
-        $this->addToAssertionCount(1);
     }
 
     public function test_a_project_can_be_private(): void
