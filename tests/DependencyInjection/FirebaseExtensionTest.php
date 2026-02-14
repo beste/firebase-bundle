@@ -6,7 +6,6 @@ namespace Kreait\Firebase\Symfony\Bundle\Tests\DependencyInjection;
 
 use Kreait\Firebase;
 use Kreait\Firebase\Http\HttpClientOptions;
-use Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory\ProjectFactory;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\FirebaseExtension;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
@@ -154,6 +153,8 @@ final class FirebaseExtensionTest extends TestCase
 
         $this->assertTrue($container->hasDefinition($this->extension->getAlias().'.foo.auth'));
         $this->assertTrue($container->hasDefinition($this->extension->getAlias().'.bar.auth'));
+        $this->assertTrue($container->hasDefinition($this->projectFactoryServiceId('foo')));
+        $this->assertTrue($container->hasDefinition($this->projectFactoryServiceId('bar')));
     }
 
     public function testProjectFactoryOptionsDoNotLeakBetweenProjects(): void
@@ -254,5 +255,10 @@ final class FirebaseExtensionTest extends TestCase
         $this->extension->load([$this->extension->getAlias() => $config], $container);
 
         return $container;
+    }
+
+    private function projectFactoryServiceId(string $projectName): string
+    {
+        return $this->extension->getAlias().'.'.$projectName.'.project_factory';
     }
 }

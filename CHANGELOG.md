@@ -7,6 +7,8 @@
 * Removed Dynamic Links support because it was removed from the Firebase Admin SDK
 * Removed HTTP request logger configuration options because the underlying SDK hooks were removed
 * Added support for per-project `http_client_options` service configuration
+* Fixed project option leakage by isolating project factory instances per configured Firebase project
+* Removed the container service `Kreait\Firebase\Factory`
 
 ### Migration: HTTP request logging
 
@@ -51,6 +53,15 @@ kreait_firebase:
     my_project:
       http_client_options: 'app.firebase.http_client_options'
 ```
+
+### Migration: custom DI integrations
+
+If you customized bundle internals with compiler passes or direct container lookups:
+
+* `Kreait\Firebase\Factory` is no longer registered as a container service.
+* Project factories are now per project (`kreait_firebase.<project>.project_factory`) instead of using only `Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory\ProjectFactory`.
+
+If your app modified the `ProjectFactory` definition directly, update your code to target the per-project service id(s).
 
 ## [5.7.0]
 
