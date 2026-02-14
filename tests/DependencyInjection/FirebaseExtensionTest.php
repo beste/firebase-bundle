@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kreait\Firebase\Symfony\Bundle\Tests\DependencyInjection;
 
 use Kreait\Firebase;
+use Kreait\Firebase\Http\HttpClientOptions;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\FirebaseExtension;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
@@ -98,6 +99,24 @@ final class FirebaseExtensionTest extends TestCase
         ]);
         $cache = $this->createMock(CacheItemPoolInterface::class);
         $container->set($cacheServiceId, $cache);
+
+        $container->get(Firebase\Contract\Auth::class);
+        $this->addToAssertionCount(1);
+    }
+
+    public function test_http_client_options_can_be_used(): void
+    {
+        $httpClientOptionsServiceId = 'firebase.http_client_options';
+
+        $container = $this->createContainer([
+            'projects' => [
+                'foo' => [
+                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
+                    'http_client_options' => $httpClientOptionsServiceId,
+                ],
+            ],
+        ]);
+        $container->set($httpClientOptionsServiceId, HttpClientOptions::default()->withTimeout(10.0));
 
         $container->get(Firebase\Contract\Auth::class);
         $this->addToAssertionCount(1);

@@ -6,6 +6,7 @@ namespace Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory;
 
 use Kreait\Firebase;
 use Kreait\Firebase\Factory;
+use Kreait\Firebase\Http\HttpClientOptions;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Adapter\Psr16Adapter;
@@ -14,6 +15,7 @@ class ProjectFactory
 {
     private ?CacheItemPoolInterface $verifierCache = null;
     private ?CacheItemPoolInterface $authTokenCache = null;
+    private ?HttpClientOptions $httpClientOptions = null;
 
     /**
      * @param CacheInterface|CacheItemPoolInterface $verifierCache
@@ -37,6 +39,11 @@ class ProjectFactory
         }
 
         $this->authTokenCache = $authTokenCache;
+    }
+
+    public function setHttpClientOptions(?HttpClientOptions $httpClientOptions = null): void
+    {
+        $this->httpClientOptions = $httpClientOptions;
     }
 
     public function createAuth(array $config = []): Firebase\Contract\Auth
@@ -70,6 +77,10 @@ class ProjectFactory
 
         if ($this->authTokenCache) {
             $factory = $factory->withAuthTokenCache($this->authTokenCache);
+        }
+
+        if ($this->httpClientOptions) {
+            $factory = $factory->withHttpClientOptions($this->httpClientOptions);
         }
 
         return $factory;

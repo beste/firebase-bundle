@@ -73,6 +73,10 @@ class FirebaseExtension extends Extension
             $factory->addMethodCall('setAuthTokenCache', [new Reference($config['auth_token_cache'])]);
         }
 
+        if ($config['http_client_options'] ?? null) {
+            $factory->addMethodCall('setHttpClientOptions', [new Reference($config['http_client_options'])]);
+        }
+
         $container->register($projectServiceId, $contract)
             ->setFactory([$factory, $method])
             ->setLazy(true)
