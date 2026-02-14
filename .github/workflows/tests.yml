@@ -24,13 +24,7 @@ concurrency:
 
 jobs:
   test:
-    name: >
-      ${{ format('PHP {0} - Sf {1} - deps {2} - stab. {3}',
-        matrix.php-version || 'Ø',
-        matrix.symfony-require || 'Ø',
-        matrix.dependencies || 'Ø',
-        matrix.stability || 'Ø'
-      ) }}
+    name: ${{ matrix.job-name }}
     runs-on: "ubuntu-latest"
     env:
       SYMFONY_REQUIRE: ${{matrix.symfony-require}}
@@ -39,36 +33,30 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version:
-          - "8.3"
-          - "8.4"
-          - "8.5"
-        dependencies:
-          - "highest"
-        stability:
-          - "stable"
-        symfony-require:
-          - ""
         include:
-          # Test with the lowest set of dependencies
+          # Symfony 6.4 LTS on minimum supported PHP
           - php-version: "8.3"
-            dependencies: "lowest"
-            stability: "stable"
-
-          # Test 6.4 LTS
-          - php-version: "8.5"
             symfony-require: "6.4.*"
-            dependencies: "highest"
+            job-name: "PHP 8.3 - Symfony 6.4 LTS"
 
-          # Test 7.4 LTS
-          - php-version: "8.5"
+          # Symfony 7.4 LTS on minimum supported PHP
+          - php-version: "8.3"
             symfony-require: "7.4.*"
-            dependencies: "highest"
+            job-name: "PHP 8.3 - Symfony 7.4 LTS"
 
-          # Bleeding edge
+          # Symfony 8 on supported PHP versions
+          - php-version: "8.4"
+            symfony-require: "8.0.*"
+            job-name: "PHP 8.4 - Symfony 8.0"
+
           - php-version: "8.5"
-            dependencies: "highest"
-            stability: "dev"
+            symfony-require: "8.0.*"
+            job-name: "PHP 8.5 - Symfony 8.0"
+
+          # Forward-compat lane for upcoming Symfony 8.x releases
+          - php-version: "8.5"
+            symfony-require: "8.*"
+            job-name: "PHP 8.5 - Symfony 8.x"
 
     steps:
       - name: "Checkout"
@@ -83,15 +71,10 @@ jobs:
           ini-file: "development"
           tools: flex
 
-      - name: "Enforce using stable dependencies"
-        run: "composer config minimum-stability stable"
-        if: "${{ matrix.stability == 'stable' }}"
-
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v3"
         with:
-          dependency-versions: "${{ matrix.dependencies }}"
           composer-options: "--prefer-dist"
 
-      - name: Run test suite on PHP ${{ matrix.php }} and Symfony ${{ matrix.symfony }}
+      - name: Run test suite
         run: ./vendor/bin/phpunit
