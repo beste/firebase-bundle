@@ -21,7 +21,7 @@
         "symfony/http-kernel": "^6.4 || ^7.4 || ^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.5.58"
+        "phpunit/phpunit": "^12.5.11"
     },
     "autoload": {
         "psr-4": {
