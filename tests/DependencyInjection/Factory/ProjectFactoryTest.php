@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Symfony\Bundle\Tests\DependencyInjection\Factory;
 
-use Kreait\Firebase\Factory as FirebaseFactory;
 use Kreait\Firebase\Http\HttpClientOptions;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory\ProjectFactory;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
@@ -43,19 +42,43 @@ final class ProjectFactoryTest extends TestCase
     }
 
     #[DoesNotPerformAssertions]
-    public function test_it_can_handle_a_custom_database_uri(): void
+    public function testItCanHandleACustomDatabaseUri(): void
     {
         $this->factory->createDatabase($this->defaultConfig + ['database_uri' => 'https://domain.tld']);
     }
 
     #[DoesNotPerformAssertions]
-    public function test_it_can_handle_a_credentials_path(): void
+    public function testItCanCreateMessaging(): void
+    {
+        $this->factory->createMessaging($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanCreateRemoteConfig(): void
+    {
+        $this->factory->createRemoteConfig($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanCreateStorage(): void
+    {
+        $this->factory->createStorage($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanCreateAppCheck(): void
+    {
+        $this->factory->createAppCheck($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanHandleACredentialsPath(): void
     {
         $this->factory->createAuth(['credentials' => __DIR__.'/../../_fixtures/valid_credentials.json']);
     }
 
     #[DoesNotPerformAssertions]
-    public function test_it_can_handle_a_credentials_string(): void
+    public function testItCanHandleACredentialsString(): void
     {
         $credentials = \file_get_contents(__DIR__.'/../../_fixtures/valid_credentials.json');
 
@@ -63,7 +86,7 @@ final class ProjectFactoryTest extends TestCase
     }
 
     #[DoesNotPerformAssertions]
-    public function test_it_can_handle_a_credentials_array(): void
+    public function testItCanHandleACredentialsArray(): void
     {
         $credentials = \json_decode(\file_get_contents(__DIR__.'/../../_fixtures/valid_credentials.json'), true);
 
@@ -71,19 +94,19 @@ final class ProjectFactoryTest extends TestCase
     }
 
     #[DoesNotPerformAssertions]
-    public function test_it_can_handle_a_tenant_id(): void
+    public function testItCanHandleATenantId(): void
     {
         $this->factory->createAuth($this->defaultConfig + ['tenant_id' => 'tenant-id']);
     }
 
     #[DoesNotPerformAssertions]
-    public function test_it_can_handle_a_project_id(): void
+    public function testItCanHandleAProjectId(): void
     {
         $this->factory->createAuth($this->defaultConfig + ['project_id' => 'project-b']);
     }
 
     #[DoesNotPerformAssertions]
-    public function test_it_accepts_a_PSR16_verifier_cache(): void
+    public function testItAcceptsAPSR16VerifierCache(): void
     {
         $cache = $this->createStub(CacheInterface::class);
 
@@ -92,7 +115,7 @@ final class ProjectFactoryTest extends TestCase
     }
 
     #[DoesNotPerformAssertions]
-    public function test_it_accepts_a_PSR6_verifier_cache(): void
+    public function testItAcceptsAPSR6VerifierCache(): void
     {
         $cache = $this->createStub(CacheItemPoolInterface::class);
 
@@ -101,7 +124,7 @@ final class ProjectFactoryTest extends TestCase
     }
 
     #[DoesNotPerformAssertions]
-    public function test_it_accepts_a_PSR16_auth_token_cache(): void
+    public function testItAcceptsAPSR16AuthTokenCache(): void
     {
         $cache = $this->createStub(CacheInterface::class);
 
@@ -109,11 +132,8 @@ final class ProjectFactoryTest extends TestCase
         $this->factory->createAuth($this->defaultConfig);
     }
 
-    /**
-     * @test
-     */
     #[DoesNotPerformAssertions]
-    public function it_accepts_a_PSR6_auth_token_cache(): void
+    public function testItAcceptsAPSR6AuthTokenCache(): void
     {
         $cache = $this->createStub(CacheItemPoolInterface::class);
 
@@ -121,15 +141,22 @@ final class ProjectFactoryTest extends TestCase
         $this->factory->createAuth($this->defaultConfig);
     }
 
-    /**
-     * @test
-     */
     #[DoesNotPerformAssertions]
-    public function it_accepts_http_client_options(): void
+    public function testItAcceptsHttpClientOptions(): void
     {
         $httpClientOptions = HttpClientOptions::default()->withTimeout(10.0);
 
         $this->factory->setHttpClientOptions($httpClientOptions);
+        $this->factory->createAuth($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanResetHttpClientOptionsToNull(): void
+    {
+        $httpClientOptions = HttpClientOptions::default()->withTimeout(10.0);
+
+        $this->factory->setHttpClientOptions($httpClientOptions);
+        $this->factory->setHttpClientOptions(null);
         $this->factory->createAuth($this->defaultConfig);
     }
 }
