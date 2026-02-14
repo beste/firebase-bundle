@@ -45,6 +45,11 @@
     "scripts": {
         "test": [
             "vendor/bin/phpunit"
+        ],
+        "test:coverage": [
+            "Composer\\Config::disableProcessTimeout",
+            "mkdir -p build",
+            "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html=build/coverage"
         ]
     }
 }
