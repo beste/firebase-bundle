@@ -8,7 +8,6 @@ use Kreait\Firebase;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\FirebaseExtension;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Log\LoggerInterface;
 use ReflectionException;
 use stdClass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -61,10 +60,6 @@ final class FirebaseExtensionTest extends TestCase
         $this->assertInstanceOf(Firebase\Contract\Messaging::class, $container->get(Firebase\Contract\Messaging::class));
         $this->assertInstanceOf(Firebase\Contract\Messaging::class, $container->get(Firebase\Contract\Messaging::class.' $fooMessaging'));
 
-        $this->assertInstanceOf(Firebase\Contract\DynamicLinks::class, $container->get($this->extension->getAlias().'.foo.dynamic_links'));
-        $this->assertInstanceOf(Firebase\Contract\DynamicLinks::class, $container->get(Firebase\Contract\DynamicLinks::class));
-        $this->assertInstanceOf(Firebase\Contract\DynamicLinks::class, $container->get(Firebase\Contract\DynamicLinks::class.' $fooDynamicLinks'));
-
         $this->assertInstanceOf(Firebase\Contract\AppCheck::class, $container->get($this->extension->getAlias().'.foo.app_check'));
         $this->assertInstanceOf(Firebase\Contract\AppCheck::class, $container->get(Firebase\Contract\AppCheck::class));
         $this->assertInstanceOf(Firebase\Contract\AppCheck::class, $container->get(Firebase\Contract\AppCheck::class.' $fooAppCheck'));
@@ -103,44 +98,6 @@ final class FirebaseExtensionTest extends TestCase
         ]);
         $cache = $this->createMock(CacheItemPoolInterface::class);
         $container->set($cacheServiceId, $cache);
-
-        $container->get(Firebase\Contract\Auth::class);
-        $this->addToAssertionCount(1);
-    }
-
-    public function test_a_request_logger_can_be_used(): void
-    {
-        $loggerServiceId = 'firebase_logger';
-
-        $container = $this->createContainer([
-            'projects' => [
-                'foo' => [
-                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
-                    'http_request_logger' => $loggerServiceId,
-                ],
-            ],
-        ]);
-        $logger = $this->createMock(LoggerInterface::class);
-        $container->set($loggerServiceId, $logger);
-
-        $container->get(Firebase\Contract\Auth::class);
-        $this->addToAssertionCount(1);
-    }
-
-    public function test_a_request_debug_logger_can_be_used(): void
-    {
-        $loggerServiceId = 'firebase_debug_logger';
-
-        $container = $this->createContainer([
-            'projects' => [
-                'foo' => [
-                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
-                    'http_request_debug_logger' => $loggerServiceId,
-                ],
-            ],
-        ]);
-        $logger = $this->createMock(LoggerInterface::class);
-        $container->set($loggerServiceId, $logger);
 
         $container->get(Firebase\Contract\Auth::class);
         $this->addToAssertionCount(1);
