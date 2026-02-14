@@ -6,7 +6,6 @@ namespace Kreait\Firebase\Symfony\Bundle\Tests\DependencyInjection;
 
 use Kreait\Firebase;
 use Kreait\Firebase\Http\HttpClientOptions;
-use Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory\ProjectFactory;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\FirebaseExtension;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
@@ -81,7 +80,7 @@ final class FirebaseExtensionTest extends TestCase
             ],
         ]);
 
-        $methodCalls = $container->getDefinition(ProjectFactory::class)->getMethodCalls();
+        $methodCalls = $container->getDefinition($this->projectFactoryServiceId('foo'))->getMethodCalls();
         $this->assertContainsEquals(
             ['setVerifierCache', [new Reference($cacheServiceId)]],
             $methodCalls,
@@ -106,7 +105,7 @@ final class FirebaseExtensionTest extends TestCase
             ],
         ]);
 
-        $methodCalls = $container->getDefinition(ProjectFactory::class)->getMethodCalls();
+        $methodCalls = $container->getDefinition($this->projectFactoryServiceId('foo'))->getMethodCalls();
         $this->assertContainsEquals(
             ['setAuthTokenCache', [new Reference($cacheServiceId)]],
             $methodCalls,
@@ -131,7 +130,7 @@ final class FirebaseExtensionTest extends TestCase
             ],
         ]);
 
-        $methodCalls = $container->getDefinition(ProjectFactory::class)->getMethodCalls();
+        $methodCalls = $container->getDefinition($this->projectFactoryServiceId('foo'))->getMethodCalls();
         $this->assertContainsEquals(
             ['setHttpClientOptions', [new Reference($httpClientOptionsServiceId)]],
             $methodCalls,
@@ -172,6 +171,36 @@ final class FirebaseExtensionTest extends TestCase
 
         $this->assertTrue($container->hasDefinition($this->extension->getAlias().'.foo.auth'));
         $this->assertTrue($container->hasDefinition($this->extension->getAlias().'.bar.auth'));
+        $this->assertTrue($container->hasDefinition($this->projectFactoryServiceId('foo')));
+        $this->assertTrue($container->hasDefinition($this->projectFactoryServiceId('bar')));
+    }
+
+    public function testProjectFactoryOptionsDoNotLeakBetweenProjects(): void
+    {
+        $fooCacheServiceId = 'cache.foo';
+        $barCacheServiceId = 'cache.bar';
+
+        $container = $this->createContainer([
+            'projects' => [
+                'foo' => [
+                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
+                    'verifier_cache' => $fooCacheServiceId,
+                ],
+                'bar' => [
+                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
+                    'auth_token_cache' => $barCacheServiceId,
+                ],
+            ],
+        ]);
+
+        $fooCalls = $container->getDefinition($this->projectFactoryServiceId('foo'))->getMethodCalls();
+        $barCalls = $container->getDefinition($this->projectFactoryServiceId('bar'))->getMethodCalls();
+
+        $this->assertContainsEquals(['setVerifierCache', [new Reference($fooCacheServiceId)]], $fooCalls);
+        $this->assertNotContainsEquals(['setAuthTokenCache', [new Reference($barCacheServiceId)]], $fooCalls);
+
+        $this->assertContainsEquals(['setAuthTokenCache', [new Reference($barCacheServiceId)]], $barCalls);
+        $this->assertNotContainsEquals(['setVerifierCache', [new Reference($fooCacheServiceId)]], $barCalls);
     }
 
     public function testItSupportsSpecifyingCredentials(): void
@@ -244,5 +273,10 @@ final class FirebaseExtensionTest extends TestCase
         $this->extension->load([$this->extension->getAlias() => $config], $container);
 
         return $container;
+    }
+
+    private function projectFactoryServiceId(string $projectName): string
+    {
+        return $this->extension->getAlias().'.'.$projectName.'.project_factory';
     }
 }

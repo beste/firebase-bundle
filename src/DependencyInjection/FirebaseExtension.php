@@ -7,10 +7,8 @@ namespace Kreait\Firebase\Symfony\Bundle\DependencyInjection;
 use Kreait\Firebase;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory\ProjectFactory;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 
 class FirebaseExtension extends Extension
@@ -20,8 +18,7 @@ class FirebaseExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new PhpFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('firebase.php');
+        $container->register(ProjectFactory::class, ProjectFactory::class)->setPublic(false);
 
         $projectConfigurations = $config['projects'] ?? [];
         $projectConfigurationsCount = \count($projectConfigurations);
@@ -39,13 +36,15 @@ class FirebaseExtension extends Extension
 
     private function processProjectConfiguration(string $name, array $config, ContainerBuilder $container): void
     {
-        $this->registerService($name, 'database', $config, Firebase\Contract\Database::class, $container, 'createDatabase');
-        $this->registerService($name, 'auth', $config, Firebase\Contract\Auth::class, $container, 'createAuth');
-        $this->registerService($name, 'storage', $config, Firebase\Contract\Storage::class, $container, 'createStorage');
-        $this->registerService($name, 'remote_config', $config, Firebase\Contract\RemoteConfig::class, $container, 'createRemoteConfig');
-        $this->registerService($name, 'messaging', $config, Firebase\Contract\Messaging::class, $container, 'createMessaging');
-        $this->registerService($name, 'firestore', $config, Firebase\Contract\Firestore::class, $container, 'createFirestore');
-        $this->registerService($name, 'app_check', $config, Firebase\Contract\AppCheck::class, $container, 'createAppCheck');
+        $projectFactory = $this->registerProjectFactory($name, $config, $container);
+
+        $this->registerService($name, 'database', $config, Firebase\Contract\Database::class, $projectFactory, $container, 'createDatabase');
+        $this->registerService($name, 'auth', $config, Firebase\Contract\Auth::class, $projectFactory, $container, 'createAuth');
+        $this->registerService($name, 'storage', $config, Firebase\Contract\Storage::class, $projectFactory, $container, 'createStorage');
+        $this->registerService($name, 'remote_config', $config, Firebase\Contract\RemoteConfig::class, $projectFactory, $container, 'createRemoteConfig');
+        $this->registerService($name, 'messaging', $config, Firebase\Contract\Messaging::class, $projectFactory, $container, 'createMessaging');
+        $this->registerService($name, 'firestore', $config, Firebase\Contract\Firestore::class, $projectFactory, $container, 'createFirestore');
+        $this->registerService($name, 'app_check', $config, Firebase\Contract\AppCheck::class, $projectFactory, $container, 'createAppCheck');
     }
 
     public function getAlias(): string
@@ -58,27 +57,35 @@ class FirebaseExtension extends Extension
         return new Configuration($this->getAlias());
     }
 
-    private function registerService(string $name, string $postfix, array $config, string $contract, ContainerBuilder $container, string $method = 'create'): void
+    private function registerProjectFactory(string $name, array $config, ContainerBuilder $container): Reference
+    {
+        $projectFactoryServiceId = \sprintf('%s.%s.project_factory', $this->getAlias(), $name);
+        $projectFactory = clone $container->getDefinition(ProjectFactory::class);
+
+        if ($config['verifier_cache'] ?? null) {
+            $projectFactory->addMethodCall('setVerifierCache', [new Reference($config['verifier_cache'])]);
+        }
+
+        if ($config['auth_token_cache'] ?? null) {
+            $projectFactory->addMethodCall('setAuthTokenCache', [new Reference($config['auth_token_cache'])]);
+        }
+
+        if ($config['http_client_options'] ?? null) {
+            $projectFactory->addMethodCall('setHttpClientOptions', [new Reference($config['http_client_options'])]);
+        }
+
+        $container->setDefinition($projectFactoryServiceId, $projectFactory);
+
+        return new Reference($projectFactoryServiceId);
+    }
+
+    private function registerService(string $name, string $postfix, array $config, string $contract, Reference $projectFactory, ContainerBuilder $container, string $method = 'create'): void
     {
         $projectServiceId = \sprintf('%s.%s.%s', $this->getAlias(), $name, $postfix);
         $isPublic = $config['public'];
 
-        $factory = $container->getDefinition(ProjectFactory::class);
-
-        if ($config['verifier_cache'] ?? null) {
-            $factory->addMethodCall('setVerifierCache', [new Reference($config['verifier_cache'])]);
-        }
-
-        if ($config['auth_token_cache'] ?? null) {
-            $factory->addMethodCall('setAuthTokenCache', [new Reference($config['auth_token_cache'])]);
-        }
-
-        if ($config['http_client_options'] ?? null) {
-            $factory->addMethodCall('setHttpClientOptions', [new Reference($config['http_client_options'])]);
-        }
-
         $container->register($projectServiceId, $contract)
-            ->setFactory([$factory, $method])
+            ->setFactory([$projectFactory, $method])
             ->setLazy(true)
             ->addArgument($config)
             ->setPublic($isPublic);
