@@ -7,7 +7,6 @@ namespace Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory;
 use Kreait\Firebase;
 use Kreait\Firebase\Factory;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Adapter\Psr16Adapter;
 
@@ -15,8 +14,6 @@ class ProjectFactory
 {
     private ?CacheItemPoolInterface $verifierCache = null;
     private ?CacheItemPoolInterface $authTokenCache = null;
-    private ?LoggerInterface $httpRequestLogger = null;
-    private ?LoggerInterface $httpRequestDebugLogger = null;
 
     /**
      * @param CacheInterface|CacheItemPoolInterface $verifierCache
@@ -40,16 +37,6 @@ class ProjectFactory
         }
 
         $this->authTokenCache = $authTokenCache;
-    }
-
-    public function setHttpRequestLogger(?LoggerInterface $logger = null): void
-    {
-        $this->httpRequestLogger = $logger;
-    }
-
-    public function setHttpRequestDebugLogger(?LoggerInterface $logger = null): void
-    {
-        $this->httpRequestDebugLogger = $logger;
     }
 
     public function createAuth(array $config = []): Firebase\Contract\Auth
@@ -85,14 +72,6 @@ class ProjectFactory
             $factory = $factory->withAuthTokenCache($this->authTokenCache);
         }
 
-        if ($this->httpRequestLogger) {
-            $factory = $factory->withHttpLogger($this->httpRequestLogger);
-        }
-
-        if ($this->httpRequestDebugLogger) {
-            $factory = $factory->withHttpDebugLogger($this->httpRequestDebugLogger);
-        }
-
         return $factory;
     }
 
@@ -119,13 +98,6 @@ class ProjectFactory
     public function createStorage(array $config = []): Firebase\Contract\Storage
     {
         return $this->createFactory($config)->createStorage();
-    }
-
-    public function createDynamicLinksService(array $config = []): Firebase\Contract\DynamicLinks
-    {
-        $defaultDynamicLinksDomain = $config['default_dynamic_links_domain'] ?? null;
-
-        return $this->createFactory($config)->createDynamicLinksService($defaultDynamicLinksDomain);
     }
 
     public function createAppCheck(array $config = []): Firebase\Contract\AppCheck

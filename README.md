@@ -78,7 +78,6 @@ The following services will be available for your project:
 * `kreait_firebase.my_project.messaging`
 * `kreait_firebase.my_project.remote_config`
 * `kreait_firebase.my_project.storage`
-* `kreait_firebase.my_project.dynamic_links`
 * `kreait_firebase.other_project.*`
 
 The following classes will be available for dependency injection if you have configured only one project:
@@ -90,7 +89,6 @@ The following classes will be available for dependency injection if you have con
 * `Kreait\Firebase\Contract\Messaging`
 * `Kreait\Firebase\Contract\RemoteConfig`
 * `Kreait\Firebase\Contract\Storage`
-* `Kreait\Firebase\Contract\DynamicLinks`
 
 To make it easier to use classes via dependency injection in the constructor of a class when multiple projects exist, you can do this in the constructor:
 
@@ -101,7 +99,6 @@ To make it easier to use classes via dependency injection in the constructor of 
 * `Kreait\Firebase\Contract\Messaging $myProjectMessaging`
 * `Kreait\Firebase\Contract\RemoteConfig $myProjectRemoteConfig`
 * `Kreait\Firebase\Contract\Storage $myProjectStorage`
-* `Kreait\Firebase\Contract\DynamicLinks $myProjectDynamicLinks`
 
 ### Full
 
@@ -133,16 +130,10 @@ kreait_firebase:
             database_uri: 'https://my_project.firebaseio.com'
             # Optional: Make the client tenant aware
             tenant_id: 'tenant-id'
-            # Optional: Default domain for Dynamic Links
-            default_dynamic_links_domain: 'https://my_project.page.link'
             # Optional: Used to cache Google's public keys.
             verifier_cache: null # Example: cache.app
             # Optional: Used to cache the authentication tokens for connecting to the Firebase servers.
             auth_token_cache: null # Example: cache.app
-            # If set, logs simple HTTP request and response statuses
-            http_request_logger:  null # Example: monolog.logger.firebase
-            # If set, logs detailed HTTP request and response statuses
-            http_request_debug_logger: null # Example: monolog.logger.firebase_debug
 ```
 
 ## Documentation

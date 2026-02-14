@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+* Dropped support for PHP versions older than 8.3 to match `kreait/firebase-php` 8.x
+* Updated the bundle to support `kreait/firebase-php` 8.x
+* Removed Dynamic Links support because it was removed from the Firebase Admin SDK
+* Removed HTTP request logger configuration options because the underlying SDK hooks were removed
+
 ## [5.7.0]
 
 * Added support for PHP 8.5 and Symfony 8

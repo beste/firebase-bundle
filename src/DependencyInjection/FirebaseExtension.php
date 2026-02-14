@@ -45,7 +45,6 @@ class FirebaseExtension extends Extension
         $this->registerService($name, 'remote_config', $config, Firebase\Contract\RemoteConfig::class, $container, 'createRemoteConfig');
         $this->registerService($name, 'messaging', $config, Firebase\Contract\Messaging::class, $container, 'createMessaging');
         $this->registerService($name, 'firestore', $config, Firebase\Contract\Firestore::class, $container, 'createFirestore');
-        $this->registerService($name, 'dynamic_links', $config, Firebase\Contract\DynamicLinks::class, $container, 'createDynamicLinksService');
         $this->registerService($name, 'app_check', $config, Firebase\Contract\AppCheck::class, $container, 'createAppCheck');
     }
 
@@ -72,14 +71,6 @@ class FirebaseExtension extends Extension
 
         if ($config['auth_token_cache'] ?? null) {
             $factory->addMethodCall('setAuthTokenCache', [new Reference($config['auth_token_cache'])]);
-        }
-
-        if ($config['http_request_logger'] ?? null) {
-            $factory->addMethodCall('setHttpRequestLogger', [new Reference($config['http_request_logger'])]);
-        }
-
-        if ($config['http_request_debug_logger'] ?? null) {
-            $factory->addMethodCall('setHttpRequestDebugLogger', [new Reference($config['http_request_debug_logger'])]);
         }
 
         $container->register($projectServiceId, $contract)
