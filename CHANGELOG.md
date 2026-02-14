@@ -6,6 +6,51 @@
 * Updated the bundle to support `kreait/firebase-php` 8.x
 * Removed Dynamic Links support because it was removed from the Firebase Admin SDK
 * Removed HTTP request logger configuration options because the underlying SDK hooks were removed
+* Added support for per-project `http_client_options` service configuration
+
+### Migration: HTTP request logging
+
+If you previously used `http_request_logger` or `http_request_debug_logger`,
+migrate to a `Kreait\Firebase\Http\HttpClientOptions` service and wire your logging through Guzzle middleware.
+
+```yaml
+# config/services.yaml
+services:
+  App\Firebase\HttpClientOptionsFactory: ~
+
+  app.firebase.http_client_options:
+    class: Kreait\Firebase\Http\HttpClientOptions
+    factory: ['@App\Firebase\HttpClientOptionsFactory', 'create']
+```
+
+```php
+<?php
+
+namespace App\Firebase;
+
+use Kreait\Firebase\Http\HttpClientOptions;
+
+final class HttpClientOptionsFactory
+{
+    public function __construct(private readonly LoggingMiddleware $loggingMiddleware)
+    {
+    }
+
+    public function create(): HttpClientOptions
+    {
+        return HttpClientOptions::default()
+            ->withGuzzleMiddleware($this->loggingMiddleware);
+    }
+}
+```
+
+```yaml
+# config/packages/firebase.yaml
+kreait_firebase:
+  projects:
+    my_project:
+      http_client_options: 'app.firebase.http_client_options'
+```
 
 ## [5.7.0]
 

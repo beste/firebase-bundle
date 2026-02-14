@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kreait\Firebase\Symfony\Bundle\Tests\DependencyInjection\Factory;
 
 use Kreait\Firebase\Factory as FirebaseFactory;
+use Kreait\Firebase\Http\HttpClientOptions;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory\ProjectFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
@@ -116,6 +117,19 @@ final class ProjectFactoryTest extends TestCase
         $cache = $this->createMock(CacheItemPoolInterface::class);
 
         $this->factory->setAuthTokenCache($cache);
+        $this->factory->createAuth($this->defaultConfig);
+
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * @test
+     */
+    public function it_accepts_http_client_options(): void
+    {
+        $httpClientOptions = HttpClientOptions::default()->withTimeout(10.0);
+
+        $this->factory->setHttpClientOptions($httpClientOptions);
         $this->factory->createAuth($this->defaultConfig);
 
         $this->addToAssertionCount(1);

@@ -134,6 +134,9 @@ kreait_firebase:
             verifier_cache: null # Example: cache.app
             # Optional: Used to cache the authentication tokens for connecting to the Firebase servers.
             auth_token_cache: null # Example: cache.app
+            # Optional: Service id of Kreait\Firebase\Http\HttpClientOptions
+            # used to configure the SDK's HTTP client.
+            http_client_options: null # Example: app.firebase.http_client_options
 ```
 
 ## Documentation
