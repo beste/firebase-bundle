@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class FirebaseBundleTest extends TestCase
 {
-    public function test_it_uses_the_right_container_extension(): void
+    public function testItUsesTheRightContainerExtension(): void
     {
         $bundle = new FirebaseBundle();
 

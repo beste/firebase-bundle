@@ -91,6 +91,9 @@ class ProjectFactory
         return $this->createFactory($config)->createDatabase();
     }
 
+    /**
+     * @codeCoverageIgnore Firestore needs optional runtime dependencies (incl. gRPC), which are not part of the default test setup.
+     */
     public function createFirestore(array $config = []): Firebase\Contract\Firestore
     {
         return $this->createFactory($config)->createFirestore();
