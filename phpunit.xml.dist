@@ -2,6 +2,8 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    beStrictAboutOutputDuringTests="true"
+    displayDetailsOnAllIssues="true"
     bootstrap="vendor/autoload.php"
     colors="true"
 >
@@ -11,9 +13,11 @@
         </testsuite>
     </testsuites>
 
-    <source restrictDeprecations="true">
+    <source ignoreIndirectDeprecations="true">
         <include>
             <directory>src</directory>
         </include>
     </source>
+
+    <coverage ignoreDeprecatedCodeUnits="true"/>
 </phpunit>

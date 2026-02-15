@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Kreait\Firebase\Symfony\Bundle\Tests\DependencyInjection\Factory;
 
-use Kreait\Firebase\Factory as FirebaseFactory;
+use Kreait\Firebase\Http\HttpClientOptions;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory\ProjectFactory;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -40,84 +41,122 @@ final class ProjectFactoryTest extends TestCase
         ];
     }
 
-    public function test_it_can_handle_a_custom_database_uri(): void
+    #[DoesNotPerformAssertions]
+    public function testItCanHandleACustomDatabaseUri(): void
     {
         $this->factory->createDatabase($this->defaultConfig + ['database_uri' => 'https://domain.tld']);
-        $this->addToAssertionCount(1);
     }
 
-    public function test_it_can_handle_a_credentials_path(): void
+    #[DoesNotPerformAssertions]
+    public function testItCanCreateMessaging(): void
+    {
+        $this->factory->createMessaging($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanCreateRemoteConfig(): void
+    {
+        $this->factory->createRemoteConfig($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanCreateStorage(): void
+    {
+        $this->factory->createStorage($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanCreateAppCheck(): void
+    {
+        $this->factory->createAppCheck($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanHandleACredentialsPath(): void
     {
         $this->factory->createAuth(['credentials' => __DIR__.'/../../_fixtures/valid_credentials.json']);
-        $this->addToAssertionCount(1);
     }
 
-    public function test_it_can_handle_a_credentials_string(): void
+    #[DoesNotPerformAssertions]
+    public function testItCanHandleACredentialsString(): void
     {
         $credentials = \file_get_contents(__DIR__.'/../../_fixtures/valid_credentials.json');
 
         $this->factory->createAuth(['credentials' => $credentials]);
-        $this->addToAssertionCount(1);
     }
 
-    public function test_it_can_handle_a_credentials_array(): void
+    #[DoesNotPerformAssertions]
+    public function testItCanHandleACredentialsArray(): void
     {
         $credentials = \json_decode(\file_get_contents(__DIR__.'/../../_fixtures/valid_credentials.json'), true);
 
         $this->factory->createAuth(['credentials' => $credentials]);
-        $this->addToAssertionCount(1);
     }
 
-    public function test_it_can_handle_a_tenant_id(): void
+    #[DoesNotPerformAssertions]
+    public function testItCanHandleATenantId(): void
     {
         $this->factory->createAuth($this->defaultConfig + ['tenant_id' => 'tenant-id']);
-        $this->addToAssertionCount(1);
     }
 
-    public function test_it_can_handle_a_project_id(): void
+    #[DoesNotPerformAssertions]
+    public function testItCanHandleAProjectId(): void
     {
-        $instance = $this->factory->createAuth($this->defaultConfig + ['project_id' => 'project-b']);
-        $this->addToAssertionCount(1);
+        $this->factory->createAuth($this->defaultConfig + ['project_id' => 'project-b']);
     }
 
-    public function test_it_accepts_a_PSR16_verifier_cache(): void
+    #[DoesNotPerformAssertions]
+    public function testItAcceptsAPSR16VerifierCache(): void
     {
-        $cache = $this->createMock(CacheInterface::class);
+        $cache = $this->createStub(CacheInterface::class);
 
         $this->factory->setVerifierCache($cache);
         $this->factory->createAuth($this->defaultConfig);
-        $this->addToAssertionCount(1);
     }
 
-    public function test_it_accepts_a_PSR6_verifier_cache(): void
+    #[DoesNotPerformAssertions]
+    public function testItAcceptsAPSR6VerifierCache(): void
     {
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+        $cache = $this->createStub(CacheItemPoolInterface::class);
 
         $this->factory->setVerifierCache($cache);
         $this->factory->createAuth($this->defaultConfig);
-        $this->addToAssertionCount(1);
     }
 
-    public function test_it_accepts_a_PSR16_auth_token_cache(): void
+    #[DoesNotPerformAssertions]
+    public function testItAcceptsAPSR16AuthTokenCache(): void
     {
-        $cache = $this->createMock(CacheInterface::class);
+        $cache = $this->createStub(CacheInterface::class);
 
         $this->factory->setAuthTokenCache($cache);
         $this->factory->createAuth($this->defaultConfig);
-
-        $this->addToAssertionCount(1);
     }
 
-    /**
-     * @test
-     */
-    public function it_accepts_a_PSR6_auth_token_cache(): void
+    #[DoesNotPerformAssertions]
+    public function testItAcceptsAPSR6AuthTokenCache(): void
     {
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+        $cache = $this->createStub(CacheItemPoolInterface::class);
 
         $this->factory->setAuthTokenCache($cache);
         $this->factory->createAuth($this->defaultConfig);
+    }
 
-        $this->addToAssertionCount(1);
+    #[DoesNotPerformAssertions]
+    public function testItAcceptsHttpClientOptions(): void
+    {
+        $httpClientOptions = HttpClientOptions::default()->withTimeout(10.0);
+
+        $this->factory->setHttpClientOptions($httpClientOptions);
+        $this->factory->createAuth($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testItCanResetHttpClientOptionsToNull(): void
+    {
+        $httpClientOptions = HttpClientOptions::default()->withTimeout(10.0);
+
+        $this->factory->setHttpClientOptions($httpClientOptions);
+        $this->factory->setHttpClientOptions(null);
+        $this->factory->createAuth($this->defaultConfig);
     }
 }

@@ -2,6 +2,67 @@
 
 ## [Unreleased]
 
+* Dropped support for PHP versions older than 8.3 to match `kreait/firebase-php` 8.x
+* Updated the bundle to support `kreait/firebase-php` 8.x
+* Removed Dynamic Links support because it was removed from the Firebase Admin SDK
+* Removed HTTP request logger configuration options because the underlying SDK hooks were removed
+* Added support for per-project `http_client_options` service configuration
+* Fixed project option leakage by isolating project factory instances per configured Firebase project
+* Removed the container service `Kreait\Firebase\Factory`
+
+### Migration: HTTP request logging
+
+If you previously used `http_request_logger` or `http_request_debug_logger`,
+migrate to a `Kreait\Firebase\Http\HttpClientOptions` service and wire your logging through Guzzle middleware.
+
+```yaml
+# config/services.yaml
+services:
+  App\Firebase\HttpClientOptionsFactory: ~
+
+  app.firebase.http_client_options:
+    class: Kreait\Firebase\Http\HttpClientOptions
+    factory: ['@App\Firebase\HttpClientOptionsFactory', 'create']
+```
+
+```php
+<?php
+
+namespace App\Firebase;
+
+use Kreait\Firebase\Http\HttpClientOptions;
+
+final class HttpClientOptionsFactory
+{
+    public function __construct(private readonly LoggingMiddleware $loggingMiddleware)
+    {
+    }
+
+    public function create(): HttpClientOptions
+    {
+        return HttpClientOptions::default()
+            ->withGuzzleMiddleware($this->loggingMiddleware);
+    }
+}
+```
+
+```yaml
+# config/packages/firebase.yaml
+kreait_firebase:
+  projects:
+    my_project:
+      http_client_options: 'app.firebase.http_client_options'
+```
+
+### Migration: custom DI integrations
+
+If you customized bundle internals with compiler passes or direct container lookups:
+
+* `Kreait\Firebase\Factory` is no longer registered as a container service.
+* Project factories are now per project (`kreait_firebase.<project>.project_factory`) instead of using only `Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory\ProjectFactory`.
+
+If your app modified the `ProjectFactory` definition directly, update your code to target the per-project service id(s).
+
 ## [5.7.0]
 
 * Added support for PHP 8.5 and Symfony 8

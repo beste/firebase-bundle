@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Kreait\Firebase\Symfony\Bundle\Tests\DependencyInjection;
 
 use Kreait\Firebase;
+use Kreait\Firebase\Http\HttpClientOptions;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\FirebaseExtension;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Log\LoggerInterface;
 use ReflectionException;
 use stdClass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Component\DependencyInjection\Reference;
 use TypeError;
 
 /**
@@ -31,7 +32,7 @@ final class FirebaseExtensionTest extends TestCase
         $this->extension = new FirebaseExtension();
     }
 
-    public function test_a_project_is_created_with_a_service_for_each_feature(): void
+    public function testAProjectIsCreatedWithAServiceForEachFeature(): void
     {
         $container = $this->createContainer([
             'projects' => [
@@ -61,16 +62,12 @@ final class FirebaseExtensionTest extends TestCase
         $this->assertInstanceOf(Firebase\Contract\Messaging::class, $container->get(Firebase\Contract\Messaging::class));
         $this->assertInstanceOf(Firebase\Contract\Messaging::class, $container->get(Firebase\Contract\Messaging::class.' $fooMessaging'));
 
-        $this->assertInstanceOf(Firebase\Contract\DynamicLinks::class, $container->get($this->extension->getAlias().'.foo.dynamic_links'));
-        $this->assertInstanceOf(Firebase\Contract\DynamicLinks::class, $container->get(Firebase\Contract\DynamicLinks::class));
-        $this->assertInstanceOf(Firebase\Contract\DynamicLinks::class, $container->get(Firebase\Contract\DynamicLinks::class.' $fooDynamicLinks'));
-
         $this->assertInstanceOf(Firebase\Contract\AppCheck::class, $container->get($this->extension->getAlias().'.foo.app_check'));
         $this->assertInstanceOf(Firebase\Contract\AppCheck::class, $container->get(Firebase\Contract\AppCheck::class));
         $this->assertInstanceOf(Firebase\Contract\AppCheck::class, $container->get(Firebase\Contract\AppCheck::class.' $fooAppCheck'));
     }
 
-    public function test_a_verifier_cache_can_be_used(): void
+    public function testAVerifierCacheCanBeUsed(): void
     {
         $cacheServiceId = 'cache.app.simple.mock';
 
@@ -82,14 +79,20 @@ final class FirebaseExtensionTest extends TestCase
                 ],
             ],
         ]);
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+
+        $methodCalls = $container->getDefinition($this->projectFactoryServiceId('foo'))->getMethodCalls();
+        $this->assertContainsEquals(
+            ['setVerifierCache', [new Reference($cacheServiceId)]],
+            $methodCalls,
+        );
+
+        $cache = $this->createStub(CacheItemPoolInterface::class);
         $container->set($cacheServiceId, $cache);
 
-        $container->get(Firebase\Contract\Auth::class);
-        $this->addToAssertionCount(1);
+        $this->assertInstanceOf(Firebase\Contract\Auth::class, $container->get(Firebase\Contract\Auth::class));
     }
 
-    public function test_an_auth_token_cache_can_be_used(): void
+    public function testAnAuthTokenCacheCanBeUsed(): void
     {
         $cacheServiceId = 'cache.app.simple.mock';
 
@@ -101,52 +104,44 @@ final class FirebaseExtensionTest extends TestCase
                 ],
             ],
         ]);
-        $cache = $this->createMock(CacheItemPoolInterface::class);
+
+        $methodCalls = $container->getDefinition($this->projectFactoryServiceId('foo'))->getMethodCalls();
+        $this->assertContainsEquals(
+            ['setAuthTokenCache', [new Reference($cacheServiceId)]],
+            $methodCalls,
+        );
+
+        $cache = $this->createStub(CacheItemPoolInterface::class);
         $container->set($cacheServiceId, $cache);
 
-        $container->get(Firebase\Contract\Auth::class);
-        $this->addToAssertionCount(1);
+        $this->assertInstanceOf(Firebase\Contract\Auth::class, $container->get(Firebase\Contract\Auth::class));
     }
 
-    public function test_a_request_logger_can_be_used(): void
+    public function testHttpClientOptionsCanBeUsed(): void
     {
-        $loggerServiceId = 'firebase_logger';
+        $httpClientOptionsServiceId = 'firebase.http_client_options';
 
         $container = $this->createContainer([
             'projects' => [
                 'foo' => [
                     'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
-                    'http_request_logger' => $loggerServiceId,
+                    'http_client_options' => $httpClientOptionsServiceId,
                 ],
             ],
         ]);
-        $logger = $this->createMock(LoggerInterface::class);
-        $container->set($loggerServiceId, $logger);
 
-        $container->get(Firebase\Contract\Auth::class);
-        $this->addToAssertionCount(1);
+        $methodCalls = $container->getDefinition($this->projectFactoryServiceId('foo'))->getMethodCalls();
+        $this->assertContainsEquals(
+            ['setHttpClientOptions', [new Reference($httpClientOptionsServiceId)]],
+            $methodCalls,
+        );
+
+        $container->set($httpClientOptionsServiceId, HttpClientOptions::default()->withTimeout(10.0));
+
+        $this->assertInstanceOf(Firebase\Contract\Auth::class, $container->get(Firebase\Contract\Auth::class));
     }
 
-    public function test_a_request_debug_logger_can_be_used(): void
-    {
-        $loggerServiceId = 'firebase_debug_logger';
-
-        $container = $this->createContainer([
-            'projects' => [
-                'foo' => [
-                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
-                    'http_request_debug_logger' => $loggerServiceId,
-                ],
-            ],
-        ]);
-        $logger = $this->createMock(LoggerInterface::class);
-        $container->set($loggerServiceId, $logger);
-
-        $container->get(Firebase\Contract\Auth::class);
-        $this->addToAssertionCount(1);
-    }
-
-    public function test_a_project_can_be_private(): void
+    public function testAProjectCanBePrivate(): void
     {
         $container = $this->createContainer([
             'projects' => [
@@ -161,7 +156,7 @@ final class FirebaseExtensionTest extends TestCase
         $this->assertFalse($container->has($this->extension->getAlias().'.foo'));
     }
 
-    public function test_it_can_provide_multiple_projects(): void
+    public function testItCanProvideMultipleProjects(): void
     {
         $container = $this->createContainer([
             'projects' => [
@@ -176,9 +171,39 @@ final class FirebaseExtensionTest extends TestCase
 
         $this->assertTrue($container->hasDefinition($this->extension->getAlias().'.foo.auth'));
         $this->assertTrue($container->hasDefinition($this->extension->getAlias().'.bar.auth'));
+        $this->assertTrue($container->hasDefinition($this->projectFactoryServiceId('foo')));
+        $this->assertTrue($container->hasDefinition($this->projectFactoryServiceId('bar')));
     }
 
-    public function test_it_supports_specifying_credentials(): void
+    public function testProjectFactoryOptionsDoNotLeakBetweenProjects(): void
+    {
+        $fooCacheServiceId = 'cache.foo';
+        $barCacheServiceId = 'cache.bar';
+
+        $container = $this->createContainer([
+            'projects' => [
+                'foo' => [
+                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
+                    'verifier_cache' => $fooCacheServiceId,
+                ],
+                'bar' => [
+                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
+                    'auth_token_cache' => $barCacheServiceId,
+                ],
+            ],
+        ]);
+
+        $fooCalls = $container->getDefinition($this->projectFactoryServiceId('foo'))->getMethodCalls();
+        $barCalls = $container->getDefinition($this->projectFactoryServiceId('bar'))->getMethodCalls();
+
+        $this->assertContainsEquals(['setVerifierCache', [new Reference($fooCacheServiceId)]], $fooCalls);
+        $this->assertNotContainsEquals(['setAuthTokenCache', [new Reference($barCacheServiceId)]], $fooCalls);
+
+        $this->assertContainsEquals(['setAuthTokenCache', [new Reference($barCacheServiceId)]], $barCalls);
+        $this->assertNotContainsEquals(['setVerifierCache', [new Reference($fooCacheServiceId)]], $barCalls);
+    }
+
+    public function testItSupportsSpecifyingCredentials(): void
     {
         $container = $this->createContainer([
             'projects' => [
@@ -191,7 +216,7 @@ final class FirebaseExtensionTest extends TestCase
         $this->assertTrue($container->hasDefinition($this->extension->getAlias().'.foo.auth'));
     }
 
-    public function test_it_accepts_only_one_default_project(): void
+    public function testItAcceptsOnlyOneDefaultProject(): void
     {
         $this->expectException(InvalidConfigurationException::class);
 
@@ -209,7 +234,7 @@ final class FirebaseExtensionTest extends TestCase
         ]);
     }
 
-    public function test_it_has_no_default_project_if_none_could_be_determined(): void
+    public function testItHasNoDefaultProjectIfNoneCouldBeDetermined(): void
     {
         $container = $this->createContainer([
             'projects' => [
@@ -248,5 +273,10 @@ final class FirebaseExtensionTest extends TestCase
         $this->extension->load([$this->extension->getAlias() => $config], $container);
 
         return $container;
+    }
+
+    private function projectFactoryServiceId(string $projectName): string
+    {
+        return $this->extension->getAlias().'.'.$projectName.'.project_factory';
     }
 }

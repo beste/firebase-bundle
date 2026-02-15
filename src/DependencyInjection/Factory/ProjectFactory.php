@@ -6,8 +6,8 @@ namespace Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory;
 
 use Kreait\Firebase;
 use Kreait\Firebase\Factory;
+use Kreait\Firebase\Http\HttpClientOptions;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Adapter\Psr16Adapter;
 
@@ -15,8 +15,7 @@ class ProjectFactory
 {
     private ?CacheItemPoolInterface $verifierCache = null;
     private ?CacheItemPoolInterface $authTokenCache = null;
-    private ?LoggerInterface $httpRequestLogger = null;
-    private ?LoggerInterface $httpRequestDebugLogger = null;
+    private ?HttpClientOptions $httpClientOptions = null;
 
     /**
      * @param CacheInterface|CacheItemPoolInterface $verifierCache
@@ -42,14 +41,9 @@ class ProjectFactory
         $this->authTokenCache = $authTokenCache;
     }
 
-    public function setHttpRequestLogger(?LoggerInterface $logger = null): void
+    public function setHttpClientOptions(?HttpClientOptions $httpClientOptions = null): void
     {
-        $this->httpRequestLogger = $logger;
-    }
-
-    public function setHttpRequestDebugLogger(?LoggerInterface $logger = null): void
-    {
-        $this->httpRequestDebugLogger = $logger;
+        $this->httpClientOptions = $httpClientOptions;
     }
 
     public function createAuth(array $config = []): Firebase\Contract\Auth
@@ -85,12 +79,8 @@ class ProjectFactory
             $factory = $factory->withAuthTokenCache($this->authTokenCache);
         }
 
-        if ($this->httpRequestLogger) {
-            $factory = $factory->withHttpLogger($this->httpRequestLogger);
-        }
-
-        if ($this->httpRequestDebugLogger) {
-            $factory = $factory->withHttpDebugLogger($this->httpRequestDebugLogger);
+        if ($this->httpClientOptions) {
+            $factory = $factory->withHttpClientOptions($this->httpClientOptions);
         }
 
         return $factory;
@@ -101,6 +91,9 @@ class ProjectFactory
         return $this->createFactory($config)->createDatabase();
     }
 
+    /**
+     * @codeCoverageIgnore Firestore needs optional runtime dependencies (incl. gRPC), which are not part of the default test setup.
+     */
     public function createFirestore(array $config = []): Firebase\Contract\Firestore
     {
         return $this->createFactory($config)->createFirestore();
@@ -119,13 +112,6 @@ class ProjectFactory
     public function createStorage(array $config = []): Firebase\Contract\Storage
     {
         return $this->createFactory($config)->createStorage();
-    }
-
-    public function createDynamicLinksService(array $config = []): Firebase\Contract\DynamicLinks
-    {
-        $defaultDynamicLinksDomain = $config['default_dynamic_links_domain'] ?? null;
-
-        return $this->createFactory($config)->createDynamicLinksService($defaultDynamicLinksDomain);
     }
 
     public function createAppCheck(array $config = []): Firebase\Contract\AppCheck
