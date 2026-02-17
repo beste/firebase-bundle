@@ -9,7 +9,7 @@ A Symfony Bundle for the [Firebase PHP SDK](https://github.com/beste/firebase-ph
 [![Sponsor](https://img.shields.io/static/v1?logo=GitHub&label=Sponsor&message=%E2%9D%A4&color=ff69b4)](https://github.com/sponsors/jeromegamez)
 
 > [!IMPORTANT]
-> **Support the project:** This library is downloaded 1M+ times monthly and powers thousands of applications.
+> **Support the project:** The [Firebase PHP SDK](https://github.com/beste/firebase-php) is downloaded 1M+ times monthly and powers thousands of applications.
 > If it saves you or your team time, please consider
 > [sponsoring its development](https://github.com/sponsors/jeromegamez).
 
