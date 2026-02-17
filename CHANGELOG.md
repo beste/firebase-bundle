@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [6.0.0]
+
 * Dropped support for PHP versions older than 8.3 to match `kreait/firebase-php` 8.x
 * Updated the bundle to support `kreait/firebase-php` 8.x
 * Removed Dynamic Links support because it was removed from the Firebase Admin SDK
@@ -188,7 +190,11 @@ This is a release with breaking changes. Please review the following changes and
 * Removed Support for `kreait/firebase-php:<5.0`
 * Removed project aliases
 
-[Unreleased]: https://github.com/beste/firebase-bundle/compare/5.4.0...HEAD
+[Unreleased]: https://github.com/beste/firebase-bundle/compare/6.0.0...HEAD
+[6.0.0]: https://github.com/beste/firebase-bundle/compare/5.7.0...6.0.0
+[5.7.0]: https://github.com/beste/firebase-bundle/compare/5.6.0...5.7.0
+[5.6.0]: https://github.com/beste/firebase-bundle/compare/5.5.0...5.6.0
+[5.5.0]: https://github.com/beste/firebase-bundle/compare/5.4.0...5.5.0
 [5.4.0]: https://github.com/beste/firebase-bundle/compare/5.3.0...5.4.0
 [5.3.0]: https://github.com/beste/firebase-bundle/compare/5.2.0...5.3.0
 [5.2.0]: https://github.com/beste/firebase-bundle/compare/5.1.1...5.2.0
