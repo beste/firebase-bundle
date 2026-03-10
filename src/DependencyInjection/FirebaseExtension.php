@@ -70,6 +70,10 @@ class FirebaseExtension extends Extension
             $projectFactory->addMethodCall('setAuthTokenCache', [new Reference($config['auth_token_cache'])]);
         }
 
+        if ($config['key_set_cache'] ?? null) {
+            $projectFactory->addMethodCall('setKeySetCache', [new Reference($config['key_set_cache'])]);
+        }
+
         if ($config['http_client_options'] ?? null) {
             $projectFactory->addMethodCall('setHttpClientOptions', [new Reference($config['http_client_options'])]);
         }

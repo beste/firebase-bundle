@@ -105,6 +105,26 @@ final class FirebaseExtensionTest extends TestCase
         $this->assertInstanceOf(Firebase\Contract\Auth::class, $container->get(Firebase\Contract\Auth::class));
     }
 
+    public function testAKeySetCacheCanBeUsed(): void
+    {
+        $cacheServiceId = 'cache.app.simple.mock';
+
+        $container = $this->createContainer([
+            'projects' => [
+                'foo' => [
+                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
+                    'key_set_cache' => $cacheServiceId,
+                ],
+            ],
+        ]);
+
+        $cache = $this->createStub(CacheItemPoolInterface::class);
+        $container->set($cacheServiceId, $cache);
+
+        $this->assertInstanceOf(Firebase\Contract\Auth::class, $container->get(Firebase\Contract\Auth::class));
+        $this->assertInstanceOf(Firebase\Contract\AppCheck::class, $container->get(Firebase\Contract\AppCheck::class));
+    }
+
     public function testHttpClientOptionsCanBeUsed(): void
     {
         $httpClientOptionsServiceId = 'firebase.http_client_options';
