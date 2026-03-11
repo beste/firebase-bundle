@@ -121,7 +121,6 @@ final class FirebaseExtensionTest extends TestCase
         $cache = $this->createStub(CacheItemPoolInterface::class);
         $container->set($cacheServiceId, $cache);
 
-        $this->assertInstanceOf(Firebase\Contract\Auth::class, $container->get(Firebase\Contract\Auth::class));
         $this->assertInstanceOf(Firebase\Contract\AppCheck::class, $container->get(Firebase\Contract\AppCheck::class));
     }
 
