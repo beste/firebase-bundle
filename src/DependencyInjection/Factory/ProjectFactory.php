@@ -15,6 +15,7 @@ class ProjectFactory
 {
     private ?CacheItemPoolInterface $verifierCache = null;
     private ?CacheItemPoolInterface $authTokenCache = null;
+    private ?CacheItemPoolInterface $keySetCache = null;
     private ?HttpClientOptions $httpClientOptions = null;
 
     /**
@@ -39,6 +40,18 @@ class ProjectFactory
         }
 
         $this->authTokenCache = $authTokenCache;
+    }
+
+    /**
+     * @param CacheInterface|CacheItemPoolInterface|null $keySetCache
+     */
+    public function setKeySetCache($keySetCache = null): void
+    {
+        if ($keySetCache instanceof CacheInterface) {
+            $keySetCache = new Psr16Adapter($keySetCache);
+        }
+
+        $this->keySetCache = $keySetCache;
     }
 
     public function setHttpClientOptions(?HttpClientOptions $httpClientOptions = null): void
@@ -81,6 +94,10 @@ class ProjectFactory
 
         if ($this->httpClientOptions) {
             $factory = $factory->withHttpClientOptions($this->httpClientOptions);
+        }
+
+        if ($this->keySetCache) {
+            $factory = $factory->withKeySetCache($this->keySetCache);
         }
 
         return $factory;

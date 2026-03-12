@@ -130,10 +130,12 @@ kreait_firebase:
             database_uri: 'https://my_project.firebaseio.com'
             # Optional: Make the client tenant aware
             tenant_id: 'tenant-id'
-            # Optional: Used to cache Google's public keys.
+            # Optional: Used to cache Google's public keys for ID Token verification.
             verifier_cache: null # Example: cache.app
             # Optional: Used to cache the authentication tokens for connecting to the Firebase servers.
             auth_token_cache: null # Example: cache.app
+            # Optional: Used to cache Google's public keys for AppCheck token verification.
+            key_set_cache: null # Example: cache.app
             # Optional: Service id of Kreait\Firebase\Http\HttpClientOptions
             # used to configure the SDK's HTTP client.
             http_client_options: null # Example: app.firebase.http_client_options
