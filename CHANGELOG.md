@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [6.1.0]
+
+* Added AppCheck keyset cache support
+
 ## [6.0.0]
 
 * Dropped support for PHP versions older than 8.3 to match `kreait/firebase-php` 8.x
