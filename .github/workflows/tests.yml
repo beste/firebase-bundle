@@ -72,7 +72,7 @@ jobs:
           tools: flex
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v3"
+        uses: "ramsey/composer-install@v4"
         with:
           composer-options: "--prefer-dist"
 
