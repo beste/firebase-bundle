@@ -58,6 +58,11 @@ jobs:
             symfony-require: "8.*"
             job-name: "PHP 8.5 - Symfony 8.x"
 
+          - php-version: "8.6"
+            symfony-require: "8.*"
+            job-name: "PHP 8.6 - Symfony 8.x"
+            composer-options: "--ignore-platform-req=php+"
+
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v6"
@@ -74,7 +79,7 @@ jobs:
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v4"
         with:
-          composer-options: "--prefer-dist"
+          composer-options: "--prefer-dist ${{ matrix.composer-options }}"
 
       - name: Run test suite
         run: ./vendor/bin/phpunit

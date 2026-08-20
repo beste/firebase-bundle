@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* Added support for PHP 8.6
+
 ## [6.1.0]
 
 * Added AppCheck keyset cache support
