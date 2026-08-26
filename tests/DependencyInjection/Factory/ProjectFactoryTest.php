@@ -151,6 +151,15 @@ final class ProjectFactoryTest extends TestCase
     }
 
     #[DoesNotPerformAssertions]
+    public function testItAcceptsAPSR16KeySetCache(): void
+    {
+        $cache = $this->createStub(CacheInterface::class);
+
+        $this->factory->setKeySetCache($cache);
+        $this->factory->createAppCheck($this->defaultConfig);
+    }
+
+    #[DoesNotPerformAssertions]
     public function testItAcceptsHttpClientOptions(): void
     {
         $httpClientOptions = HttpClientOptions::default()->withTimeout(10.0);
