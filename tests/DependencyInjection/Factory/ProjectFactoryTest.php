@@ -44,7 +44,7 @@ final class ProjectFactoryTest extends TestCase
     #[DoesNotPerformAssertions]
     public function testItCanHandleACustomDatabaseUri(): void
     {
-        $this->factory->createDatabase($this->defaultConfig + ['database_uri' => 'https://domain.tld']);
+        $this->factory->createDatabase($this->defaultConfig + ['database_uri' => 'https://example.firebaseio.com']);
     }
 
     #[DoesNotPerformAssertions]
