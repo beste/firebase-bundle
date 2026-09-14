@@ -139,6 +139,8 @@ kreait_firebase:
             # Optional: Service id of Kreait\Firebase\Http\HttpClientOptions
             # used to configure the SDK's HTTP client.
             http_client_options: null # Example: app.firebase.http_client_options
+            # Optional: Service id of a PSR-14 event dispatcher used by the SDK.
+            event_dispatcher: null # Example: event_dispatcher
 ```
 
 ## Documentation

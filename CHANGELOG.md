@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 * Added support for PHP 8.6
+* Added support for configuring a PSR-14 event dispatcher per project
 
 ## [6.1.0]
 

@@ -8,6 +8,7 @@ use Kreait\Firebase;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Http\HttpClientOptions;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Adapter\Psr16Adapter;
 
@@ -17,6 +18,7 @@ class ProjectFactory
     private ?CacheItemPoolInterface $authTokenCache = null;
     private ?CacheItemPoolInterface $keySetCache = null;
     private ?HttpClientOptions $httpClientOptions = null;
+    private ?EventDispatcherInterface $eventDispatcher = null;
 
     /**
      * @param CacheInterface|CacheItemPoolInterface $verifierCache
@@ -59,6 +61,11 @@ class ProjectFactory
         $this->httpClientOptions = $httpClientOptions;
     }
 
+    public function setEventDispatcher(?EventDispatcherInterface $eventDispatcher = null): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     public function createAuth(array $config = []): Firebase\Contract\Auth
     {
         return $this->createFactory($config)->createAuth();
@@ -98,6 +105,10 @@ class ProjectFactory
 
         if ($this->keySetCache) {
             $factory = $factory->withKeySetCache($this->keySetCache);
+        }
+
+        if ($this->eventDispatcher) {
+            $factory = $factory->withEventDispatcher($this->eventDispatcher);
         }
 
         return $factory;

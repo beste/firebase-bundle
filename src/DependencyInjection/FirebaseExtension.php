@@ -78,6 +78,10 @@ class FirebaseExtension extends Extension
             $projectFactory->addMethodCall('setHttpClientOptions', [new Reference($config['http_client_options'])]);
         }
 
+        if ($config['event_dispatcher'] ?? null) {
+            $projectFactory->addMethodCall('setEventDispatcher', [new Reference($config['event_dispatcher'])]);
+        }
+
         $container->setDefinition($projectFactoryServiceId, $projectFactory);
 
         return new Reference($projectFactoryServiceId);

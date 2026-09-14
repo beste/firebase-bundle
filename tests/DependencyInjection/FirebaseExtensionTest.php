@@ -9,6 +9,7 @@ use Kreait\Firebase\Http\HttpClientOptions;
 use Kreait\Firebase\Symfony\Bundle\DependencyInjection\FirebaseExtension;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionException;
 use stdClass;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -138,6 +139,24 @@ final class FirebaseExtensionTest extends TestCase
         ]);
 
         $container->set($httpClientOptionsServiceId, HttpClientOptions::default()->withTimeout(10.0));
+
+        $this->assertInstanceOf(Firebase\Contract\Auth::class, $container->get(Firebase\Contract\Auth::class));
+    }
+
+    public function testAnEventDispatcherCanBeUsed(): void
+    {
+        $eventDispatcherServiceId = 'event_dispatcher';
+
+        $container = $this->createContainer([
+            'projects' => [
+                'foo' => [
+                    'credentials' => __DIR__.'/../_fixtures/valid_credentials.json',
+                    'event_dispatcher' => $eventDispatcherServiceId,
+                ],
+            ],
+        ]);
+
+        $container->set($eventDispatcherServiceId, $this->createStub(EventDispatcherInterface::class));
 
         $this->assertInstanceOf(Firebase\Contract\Auth::class, $container->get(Firebase\Contract\Auth::class));
     }

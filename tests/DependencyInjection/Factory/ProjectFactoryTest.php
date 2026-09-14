@@ -9,6 +9,7 @@ use Kreait\Firebase\Symfony\Bundle\DependencyInjection\Factory\ProjectFactory;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -176,5 +177,17 @@ final class ProjectFactoryTest extends TestCase
         $this->factory->setHttpClientOptions($httpClientOptions);
         $this->factory->setHttpClientOptions(null);
         $this->factory->createAuth($this->defaultConfig);
+    }
+
+    public function testItAcceptsAnEventDispatcher(): void
+    {
+        $eventDispatcher = $this->createStub(EventDispatcherInterface::class);
+
+        $this->factory->setEventDispatcher($eventDispatcher);
+
+        $factory = $this->factory->createFactory();
+        $eventDispatcherProperty = new \ReflectionProperty($factory, 'eventDispatcher');
+
+        $this->assertSame($eventDispatcher, $eventDispatcherProperty->getValue($factory));
     }
 }
