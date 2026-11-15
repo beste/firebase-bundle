@@ -18,6 +18,9 @@ on:
       - "composer.json"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
@@ -61,13 +64,13 @@ jobs:
           - php-version: "8.6"
             symfony-require: "8.*"
             job-name: "PHP 8.6 - Symfony 8.x"
-            composer-options: "--ignore-platform-req=php+"
 
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
         with:
           fetch-depth: 2
+          persist-credentials: false
 
       - name: "Install PHP"
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
@@ -76,10 +79,21 @@ jobs:
           ini-file: "development"
           tools: flex
 
-      - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v4"
+      - name: Get Composer cache directory
+        id: composer-cache
+        shell: bash
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer cache directory
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          composer-options: "--prefer-dist ${{ matrix.composer-options }}"
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.json', 'composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: "Install dependencies with Composer"
+        run: composer update --no-interaction --no-progress --ansi --prefer-dist
 
       - name: Run test suite
         run: ./vendor/bin/phpunit
