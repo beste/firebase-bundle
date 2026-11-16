@@ -29,6 +29,8 @@ jobs:
   test:
     name: ${{ matrix.job-name }}
     runs-on: "ubuntu-latest"
+    # shortcut: Valinor excludes PHP 8.6, require this job when Valinor supports it.
+    continue-on-error: ${{ matrix.php-version == '8.6' }}
     env:
       SYMFONY_REQUIRE: ${{matrix.symfony-require}}
       SYMFONY_DEPRECATIONS_HELPER: weak
@@ -49,12 +51,12 @@ jobs:
 
           # Symfony 8 on supported PHP versions
           - php-version: "8.4"
-            symfony-require: "8.0.*"
-            job-name: "PHP 8.4 - Symfony 8.0"
+            symfony-require: "8.1.*"
+            job-name: "PHP 8.4 - Symfony 8.1"
 
           - php-version: "8.5"
-            symfony-require: "8.0.*"
-            job-name: "PHP 8.5 - Symfony 8.0"
+            symfony-require: "8.1.*"
+            job-name: "PHP 8.5 - Symfony 8.1"
 
           # Forward-compat lane for upcoming Symfony 8.x releases
           - php-version: "8.5"
