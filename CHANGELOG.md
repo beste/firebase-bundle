@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 * Added support for PHP 8.6
+* Dropped support for Symfony 8.0; Symfony 8 now requires at least 8.1
 * Added support for configuring a PSR-14 event dispatcher per project
 
 ## [6.1.0]
