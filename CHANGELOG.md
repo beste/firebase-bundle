@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [6.2.0]
+
 * Added support for PHP 8.6
 * Dropped support for Symfony 8.0; Symfony 8 now requires at least 8.1
 * Added support for configuring a PSR-14 event dispatcher per project
@@ -198,7 +200,9 @@ This is a release with breaking changes. Please review the following changes and
 * Removed Support for `kreait/firebase-php:<5.0`
 * Removed project aliases
 
-[Unreleased]: https://github.com/beste/firebase-bundle/compare/6.0.0...HEAD
+[Unreleased]: https://github.com/beste/firebase-bundle/compare/6.2.0...HEAD
+[6.2.0]: https://github.com/beste/firebase-bundle/compare/6.1.0...6.2.0
+[6.1.0]: https://github.com/beste/firebase-bundle/compare/6.0.0...6.1.0
 [6.0.0]: https://github.com/beste/firebase-bundle/compare/5.7.0...6.0.0
 [5.7.0]: https://github.com/beste/firebase-bundle/compare/5.6.0...5.7.0
 [5.6.0]: https://github.com/beste/firebase-bundle/compare/5.5.0...5.6.0
